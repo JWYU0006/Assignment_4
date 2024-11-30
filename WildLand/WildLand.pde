@@ -1,43 +1,48 @@
+import processing.sound.*;
+import gifAnimation.*;
+
 //settings
 //map settings
-int tileNumberXSetting = 40;    //tile number, world size
+int tileNumberXSetting = 40;    //tile number - world size
 int tileNumberYSetting = 40;
 
 //environment settings
-int grassDensitySetting = 3;
+int grassDensitySetting = 3;        //the number of grass in one tile
 int grassWidthSetting = 2*2*2;        //a multiple of 2
 int grassHeightSetting = 3*2;        //a multiple of 3
 
 //player settings
-int playerWidthSetting = 20;        ////player width and height settings, can change player's visual size and collision box size
+int playerWidthSetting = 20;        //player width and height settings, can change player's visual size and collision box size
 int playerHeightSetting = 36;
-int playerSpeedSetting = 2;
-int endTime = 0;
+int playerSpeedSetting = 2;        //pixel player move per frame
+int endTime = 0;        //how many seconds have the player play
 
 //weapon settings
-int bulletSpeed = 10;        //linear velocity (hypotenuse of a right triangle)
-int bulletDiameter = 10;        //bullet is a ellipse
-int bulletRadius = bulletDiameter/5;
-int fireRate = 10;        //bullets per second
+int bulletSpeed = 10;        //The linear velocity of the bullet
+int bulletRadius = 2;        //bullet is a ellipse, the radius of the round
+int fireRate = 10;        //the max number of bullets per second
 
 //monster settings
-int monsterAmountSetting = 50;        //initial monster amount
+int monsterAmountSetting = 50;        //first wave monster amount
 int monsterWidthSetting = 30;        //monster width and height settings, can change monster's collision box size
 int monsterHeightSetting = 20;
-int monsterSpeedSetting = 1;
-int monsterHPSetting = 100;
+int monsterSpeedSetting = 1;        //pixel monster move per frame
+int monsterHPSetting = 100;        //player hp limit
 
 //creating objects
 Environment environment = new Environment();
 Player player = new Player();
+Gif splatter;
 
 void setup() {
-  size(400, 400);
+  size(1280, 1280);
   noFill();
   noStroke();
   //initialization function (All initialization function should be called once)
   tileGrassArrayInitialization();
   monsterArrayInitialization();
+  //load images
+  splatter = new Gif(this, "splatter.gif");
 }
 
 int lastTimeShoot = 0;
