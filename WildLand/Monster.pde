@@ -42,8 +42,8 @@ class Monster {
   int monsterCollisionMonsterDetectionYI;
   boolean monsterBlockedX = true;
   boolean monsterBlockedY = true;
-  int playerCollisionCenterXI = 200;        //current player center position, monster continuously move towards player's position
-  int playerCollisionCenterYI = 200 + playerHeightSetting/2 - playerWidthSetting/2;        //player's collision box is a square with a side length of 20 (player's width)
+  int playerCollisionCenterXI = 400;        //current player center position, monster continuously move towards player's position
+  int playerCollisionCenterYI = 380 + playerHeightSetting/2 - playerWidthSetting/2;        //player's collision box is a square with a side length of 20 (player's width)
   int playerCollisionDetectionXI;        //which edge is used for collision detection
   int playerCollisionDetectionYI;
 
@@ -163,8 +163,8 @@ class Monster {
     }
     //If the monster collides with the player, it can attack.
     if (monsterDirectionXI == 0 && monsterDirectionYI == 0 && millis() >= lastAttackTime + 2000
-      && abs(monsterCurrentCenterXI - 200) <= playerWidthSetting/2 + monsterWidthSetting/2
-      && abs(monsterCurrentCenterYI - (200 + playerHeightSetting/2 - playerWidthSetting/2)) <= playerWidthSetting/2 + monsterHeightSetting/2) {
+      && abs(monsterCurrentCenterXI - 400) <= playerWidthSetting/2 + monsterWidthSetting/2
+      && abs(monsterCurrentCenterYI - (380 + playerHeightSetting/2 - playerWidthSetting/2)) <= playerWidthSetting/2 + monsterHeightSetting/2) {
       lastAttackTime = millis();
       player.playerCurrentHPI = constrain(player.playerCurrentHPI - 20, 0, player.playerMaxHPI);
     }
@@ -184,8 +184,8 @@ class Monster {
   }
 
   void drawMonster() {
-    monsterCurrentCenterXI -= player.playerPV.x - monsterPV.x;
-    monsterCurrentCenterYI -= player.playerPV.y - monsterPV.y;
+    monsterCurrentCenterXI -= player.playerVelocityPV.x - monsterPV.x;
+    monsterCurrentCenterYI -= player.playerVelocityPV.y - monsterPV.y;
     int x = monsterCurrentCenterXI - monsterWidthSetting/2;        //top left point of the collision box
     int y = monsterCurrentCenterYI - monsterHeightSetting/2;
     for (MonsterPixel mpEach : mp) {

@@ -6,8 +6,8 @@ class Bullet {
   PVector bulletSpeedPV = new PVector(0, 0);
 
   void generateBullet(float weaponEndPointXF, float weaponEndPointYF) {
-    bulletCurrentXF = 200 + weaponEndPointXF;        //200 is screen center point, which is also player's center point
-    bulletCurrentYF = 200 + weaponEndPointYF;        //use to calculate real weapon end point, the point where the bullet was fired
+    bulletCurrentXF = 400 + weaponEndPointXF;        //200 is screen center point, which is also player's center point
+    bulletCurrentYF = 380 + weaponEndPointYF;        //use to calculate real weapon end point, the point where the bullet was fired
     bulletSpeedXF = weaponEndPointXF * bulletSpeed / player.weaponLength;        //x/a = speed/r, x=a*speed/r
     bulletSpeedYF = weaponEndPointYF * bulletSpeed / player.weaponLength;        //y=b*speed/r
     bulletSpeedPV.x = bulletSpeedXF;
@@ -16,8 +16,8 @@ class Bullet {
 
   void drawBullet() {
     fill(200, 100, 0);
-    bulletCurrentXF += bulletSpeedPV.x - player.playerPV.x;        //Bullet movement needs to take the player's movement into account.
-    bulletCurrentYF += bulletSpeedPV.y - player.playerPV.y;
+    bulletCurrentXF += bulletSpeedPV.x - player.playerVelocityPV.x;        //Bullet movement needs to take the player's movement into account.
+    bulletCurrentYF += bulletSpeedPV.y - player.playerVelocityPV.y;
     ellipse(bulletCurrentXF, bulletCurrentYF, 10, 10);
   }
 }

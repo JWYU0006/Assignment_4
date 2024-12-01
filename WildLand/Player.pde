@@ -1,83 +1,83 @@
+ //<>//
 class Player {
   int playerMaxHPI = 100;
   int playerCurrentHPI = playerMaxHPI;
-  float playerSpeedF = playerSpeedSetting;        //characterSpeed input value
-  int playerDirectionXI = 0;        //direction in x, y axis, these ints can be 1, 0, -1
-  int playerDirectionYI = 0;
-  float playerVectorXF = 0;        //a point on circle corresponding to an x and y (= characterVectorSpeed)
-  float playerVectorYF = 0;
-  //vector = direction * speed
-  PVector playerPV = new PVector(0, 0);
+  PVector playerDirectionPV = new PVector(0, 0);        //determine which direction of image is used
+  PVector playerVelocityPV = new PVector(0, 0);        //player move's direction and speed, it's player's velocity
   int mouseXToPlayerI;
   int mouseYToPlayerI;
   float weaponEndPointXF;
   float weaponEndPointYF;
   int weaponLength = 20;
 
+  PImage playerImage;        //show player's current image
+  String playerImageFileName = "player_front_idle.png";        //which image fine should be used, default value is front idle
+  PVector imageCenterOffset = new PVector(-15, -44);        //store image offset to make image in center, default value is offset of default image
+  int startMeleeAttack = 0;        //store frameCount - when player start melee attack animation
+  Boolean meleeAttackBoolean = false;        //player's melee attack state, is in melee attack animation or not
+
   //run this function make Character system work
   void playerFunction() {
-    playerSpeedF = playerSpeedSetting;
     drawPlayer();
-    setPlayerVector();
   }
 
   void drawPlayer() {
-    //hp
-    fill(255);
-    rect(180, 170, 40, 10);
-    fill(150, 0, 0);
-    rect(180, 170, map(playerCurrentHPI, 0, playerMaxHPI, 0, 40), 10);
-    //body
-    fill(255);
-    if (playerCurrentHPI == 0) {
-      fill(150, 0, 0);
+    //calculate direction, y=x and y = -x +800, two lines intersect at (400,400), divide screen into 4 area
+    if (mouseY <= mouseX && mouseY >= -mouseX + 800) {        //right area, set direction to right, which means x=1, y=0
+      playerDirectionPV.x = 1;
+      playerDirectionPV.y = 0;
+      playerImageFileName = "player_right_idle.png";        //set corresponding image
+    } else if (mouseY <= -mouseX + 800 && mouseY >= mouseX) {        //left area
+      playerDirectionPV.x = -1;
+      playerDirectionPV.y = 0;
+      playerImageFileName = "player_left_idle.png";
+    } else if (mouseX >= mouseY && mouseX <= 800-mouseY) {        //top area
+      playerDirectionPV.y = -1;
+      playerDirectionPV.x = 0;
+      playerImageFileName = "player_back_idle.png";
+    } else {        //bottom area
+      playerDirectionPV.y = 1;
+      playerDirectionPV.x = 0;
+      playerImageFileName = "player_front_idle.png";
     }
-    rect(200 - playerWidthSetting/2, 200 - playerHeightSetting/2, playerWidthSetting, playerHeightSetting);
-    //weapon
+    //hp bar
+    fill(255);
+    rect(380, 340, 40, 10);        //hp limit bar
+    fill(150, 0, 0);
+    rect(380, 340, map(playerCurrentHPI, 0, playerMaxHPI, 0, 40), 10);        //current hp
+    //body - collision box
+    //fill(255);
+    //rect(400 - playerWidthSetting/2, 380 - playerHeightSetting/2, playerWidthSetting, playerHeightSetting);
+    //trigger player melee attack
+    playerMeleeAttack();
+    playerImage = loadImage(playerImageFileName);
+    image(playerImage, 400 + imageCenterOffset.x, 400 + imageCenterOffset.y);
+    //weapon - gun
     strokeWeight(10);
     stroke(100);
-    mouseXToPlayerI = mouseX - 200;
-    mouseYToPlayerI = mouseY - 200;
+    mouseXToPlayerI = mouseX - 400;
+    mouseYToPlayerI = mouseY - 380;
     weaponEndPointXF = mouseXToPlayerI * weaponLength / sqrt(mouseXToPlayerI*mouseXToPlayerI + mouseYToPlayerI*mouseYToPlayerI);
     weaponEndPointYF = mouseYToPlayerI * weaponLength / sqrt(mouseXToPlayerI*mouseXToPlayerI + mouseYToPlayerI*mouseYToPlayerI);
-    line(200, 200, 200 +  weaponEndPointXF, 200 + weaponEndPointYF);
+    line(400, 380, 400 +  weaponEndPointXF, 380 + weaponEndPointYF);
     noStroke();
-  }
-
-  //when moving 45° up-right, x and y = √((characterSpeed^2)/2), when moving right, x = characterSpeed;
-  void setPlayerVector() {
-    if (playerDirectionXI == 0 && playerDirectionYI != 0) {
-      playerVectorYF = playerSpeedF;
-    } else if (playerDirectionYI == 0 && playerDirectionXI != 0) {
-      playerVectorXF = playerSpeedF;
-    } else if (playerDirectionXI != 0 && playerDirectionYI != 0) {
-      //Due to float precision errors causing gaps at the edges, the diagonal speed must be changed to an integer.
-      //characterVectorSpeedX = characterVectorSpeedY = 1.4;        //sqrt(characterSpeed*characterSpeed/2) ≈ 1.4
-      playerVectorXF = playerVectorYF = playerSpeedF;
-    } else {
-      playerVectorXF = playerVectorYF = 0;
-    }
-    playerPV.set(playerDirectionXI * playerVectorXF, playerDirectionYI * playerVectorYF);
   }
 
   //detect key, set playerDirection
   void movementKeyPressed() {
     switch(key) {
     case 'w' :
-      playerDirectionYI = -1;
+      playerVelocityPV.y = -2;
       break;
     case 's':
-      playerDirectionYI = 1;
+      playerVelocityPV.y = 2;
       break;
     case 'a' :
-      playerDirectionXI = -1;
+      playerVelocityPV.x = -2;
       break;
     case 'd':
-      playerDirectionXI = 1;
+      playerVelocityPV.x = 2;
       break;
-    }
-    if (key == CODED && keyCode == SHIFT) {
-      playerSpeedSetting = 4;
     }
   }
 
@@ -85,24 +85,21 @@ class Player {
   void movementKeyReleased() {
     switch(key) {
     case 'w' :
-      if (playerDirectionYI == -1)        //When press another key before release the key, player will stop.
-        playerDirectionYI = 0;            //For example, press a, move left, press d, move right, release a, player stops, but d is still pressed.
+      if (playerVelocityPV.y == -2)        //When press another key before release the key, player will stop.
+        playerVelocityPV.y = 0;            //For example, press a, move left, press d, move right, release a, player stops, but d is still pressed.
       break;
     case 's':
-      if (playerDirectionYI == 1)
-        playerDirectionYI = 0;
+      if (playerVelocityPV.y == 2)
+        playerVelocityPV.y = 0;
       break;
     case 'a' :
-      if (playerDirectionXI == -1)
-        playerDirectionXI = 0;
+      if (playerVelocityPV.x == -2)
+        playerVelocityPV.x = 0;
       break;
     case 'd':
-      if (playerDirectionXI == 1)
-        playerDirectionXI = 0;
+      if (playerVelocityPV.x == 2)
+        playerVelocityPV.x = 0;
       break;
-    }
-    if (key == CODED && keyCode == SHIFT) {
-      playerSpeedSetting = 2;
     }
   }
 
@@ -112,6 +109,161 @@ class Player {
       Bullet b = new Bullet();
       b.generateBullet(weaponEndPointXF, weaponEndPointYF);
       bulletArrayList.add(b);
+    }
+  }
+
+  //melee attack animation and function
+  void playerMeleeAttack() {
+    //when press right and player is not in attack animation
+    if (mousePressed && mouseButton == RIGHT && meleeAttackBoolean == false
+      && (playerImageFileName == "player_front_idle.png" || playerImageFileName == "player_back_idle.png"
+      || playerImageFileName == "player_left_idle.png" || playerImageFileName == "player_right_idle.png")) {
+      startMeleeAttack = frameCount;        //store when start attack animation by frameCount
+      meleeAttackBoolean = true;
+    }
+    if (playerDirectionPV.y == 1 && meleeAttackBoolean == true) {        //when player face down and trigger melee attack
+      if (0<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 1) {        //change animation image per 2 frame
+        playerImageFileName = "player_front_attack_0.png";
+        imageCenterOffset.x = -33;        //offset to locate center point and align collision box with image
+        imageCenterOffset.y = -46;
+      } else if (2<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 3) {
+        playerImageFileName = "player_front_attack_1.png";
+        imageCenterOffset.x = -43;
+        imageCenterOffset.y = -42;
+      } else if (4<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 5) {
+        playerImageFileName = "player_front_attack_2.png"; //<>//
+        imageCenterOffset.x = -39;
+        imageCenterOffset.y = -40;
+      } else if (6<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 7) {
+        playerImageFileName = "player_front_attack_3.png";
+        imageCenterOffset.x = -39;
+        imageCenterOffset.y = -42;
+      } else if (8<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 9) {
+        playerImageFileName = "player_front_attack_4.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (10<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 11) {
+        playerImageFileName = "player_front_attack_5.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (12<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 13) {
+        playerImageFileName = "player_front_attack_6.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else {
+        playerImageFileName = "player_front_idle.png";        //animation ends, resume idle
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+        meleeAttackBoolean = false;
+      }
+    } else if (playerDirectionPV.y == -1 && meleeAttackBoolean == true) {        //when player face up and trigger melee attack
+      if (0<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 1) {
+        playerImageFileName = "player_back_attack_0.png";
+        meleeAttackBoolean = true;
+        imageCenterOffset.x = -17;
+        imageCenterOffset.y = -42;
+      } else if (2<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 3) {
+        playerImageFileName = "player_back_attack_1.png";
+        imageCenterOffset.x = -33;
+        imageCenterOffset.y = -62;
+      } else if (4<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 5) {
+        playerImageFileName = "player_back_attack_2.png";
+        imageCenterOffset.x = -37;
+        imageCenterOffset.y = -64;
+      } else if (6<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 7) {
+        playerImageFileName = "player_back_attack_3.png";
+        imageCenterOffset.x = -37;
+        imageCenterOffset.y = -64;
+      } else if (8<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 9) {
+        playerImageFileName = "player_back_attack_4.png";
+        imageCenterOffset.x = -37;
+        imageCenterOffset.y = -44;
+      } else if (10<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 11) {
+        playerImageFileName = "player_back_attack_5.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (12<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 13) {
+        playerImageFileName = "player_back_attack_6.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else {
+        playerImageFileName = "player_back_idle.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+        meleeAttackBoolean = false;
+      }
+    } else if (playerDirectionPV.x == -1 && meleeAttackBoolean == true) {        //when player face left and trigger melee attack
+      if (0<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 1) {
+        playerImageFileName = "player_left_attack_0.png";
+        meleeAttackBoolean = true;
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (2<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 3) {
+        playerImageFileName = "player_left_attack_1.png";
+        imageCenterOffset.x = -57;
+        imageCenterOffset.y = -44;
+      } else if (4<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 5) {
+        playerImageFileName = "player_left_attack_2.png";
+        imageCenterOffset.x = -59;
+        imageCenterOffset.y = -44;
+      } else if (6<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 7) {
+        playerImageFileName = "player_left_attack_3.png";
+        imageCenterOffset.x = -59;
+        imageCenterOffset.y = -44;
+      } else if (8<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 9) {
+        playerImageFileName = "player_left_attack_4.png";
+        imageCenterOffset.x = -37;
+        imageCenterOffset.y = -44;
+      } else if (10<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 11) {
+        playerImageFileName = "player_left_attack_5.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (12<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 13) {
+        playerImageFileName = "player_left_attack_6.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else {
+        playerImageFileName = "player_left_idle.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+        meleeAttackBoolean = false;
+      }
+    } else if (playerDirectionPV.x == 1 && meleeAttackBoolean == true) {        //when player face left and trigger melee attack
+      if (0<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 1) {
+        playerImageFileName = "player_right_attack_0.png";
+        meleeAttackBoolean = true;
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (2<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 3) {
+        playerImageFileName = "player_right_attack_1.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (4<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 5) {
+        playerImageFileName = "player_right_attack_2.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (6<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 7) {
+        playerImageFileName = "player_right_attack_3.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (8<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 9) {
+        playerImageFileName = "player_right_attack_4.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+      } else if (10<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 11) {
+        playerImageFileName = "player_right_attack_5.png";
+        imageCenterOffset.x = -19;
+        imageCenterOffset.y = -44;
+      } else if (12<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 13) {
+        playerImageFileName = "player_right_attack_6.png";
+        imageCenterOffset.x = -29;
+        imageCenterOffset.y = -44;
+      } else {
+        playerImageFileName = "player_right_idle.png";
+        imageCenterOffset.x = -15;
+        imageCenterOffset.y = -44;
+        meleeAttackBoolean = false;
+      }
     }
   }
 }

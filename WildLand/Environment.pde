@@ -1,11 +1,11 @@
 //It is just a born place showing on the map
-float rectX = 200;
-float rectY = 200;
+float rectX = 400;
+float rectY = 400;
 
 class Environment {
   //call in draw()
   void environmentFunction() {
-    drawGroundMap(player.playerPV.x, player.playerPV.y);
+    drawGroundMap(player.playerVelocityPV.x, player.playerVelocityPV.y);
   }
 
   void drawGroundMap(float vectorX, float vectorY) {

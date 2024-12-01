@@ -32,10 +32,12 @@ int monsterHPSetting = 100;        //player hp limit
 //creating objects
 Environment environment = new Environment();
 Player player = new Player();
+
+//load images
 Gif splatter;
 
 void setup() {
-  size(1280, 1280);
+  size(800, 800);
   noFill();
   noStroke();
   //initialization function (All initialization function should be called once)
@@ -49,6 +51,7 @@ int lastTimeShoot = 0;
 int currentTimeShoot = 0;
 int lastWave = 0;
 void draw() {
+  println(player.playerDirectionPV);
   drawMap();
   environment.environmentFunction();
   player.playerFunction();
