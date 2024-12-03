@@ -1,4 +1,4 @@
-class Player { //<>//
+class Player { //<>// //<>// //<>//
   int playerMaxHPI = 100;
   int playerCurrentHPI = playerMaxHPI;
   PVector playerDirectionPV = new PVector(0, 0);        //determine which direction of image is used
@@ -105,8 +105,8 @@ class Player { //<>//
         playerVelocityPV.x = 0;
       break;
     case 'r':
-      if (buildModeB == false) {
-        buildModeB = true;        //if buildMode is off, press r to turn it on
+      if (buildModeB == false && material >= 20) {
+        buildModeB = true;        //if buildMode is off and have enough material, press r to turn it on
       } else {
         buildModeB= false;        //if buildMode is on, press r to turn it off.
       }
@@ -119,16 +119,18 @@ class Player { //<>//
     if (mouseButton == LEFT) {
       Bullet b = new Bullet(weaponEndPointXF, weaponEndPointYF);
       bulletArrayList.add(b);
+      gunSound.play();        //play gun shot sound
     }
   }
 
   void buildMode() {
-    fill(150, 150);        //transparent tower to preview position
+    fill(150, 150);        //draw a transparent tower to preview position
     rect(mouseX - towerWidthSetting/2, mouseY - towerHeightSetting, towerWidthSetting, towerHeightSetting);
     if (keyPressed && key == ' ') {        //if press space in build mode, create a new tower stored in towerArrayList
-      Tower t = new Tower(mouseX, mouseY);
-      towerArrayList.add(t);
-      buildModeB = false;
+      Tower t = new Tower(mouseX, mouseY);        //create a tower object and pass the mouse position into constructor
+      towerArrayList.add(t);        //add the tower into towerArrayList to iterate
+      buildModeB = false;        //turn build mode off after build one tower
+      material -= 20;        //subtract 20 material points after build one tower
     }
   }
 

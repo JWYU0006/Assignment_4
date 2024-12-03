@@ -29,8 +29,8 @@ void bulletArrayListFunction() {
   if (bulletArrayList.size()>=1) {
     for (int i = bulletArrayList.size() - 1; i >= 0; i--) {
       Bullet b = bulletArrayList.get(i);
-      if (abs(b.bulletSpeedPV.x) <= 1) {        //if bullet speed lower than 0, remove it from bullet array list
-        bulletArrayList.remove(i);
+      if (b.bulletSpeedPV.x*b.bulletSpeedPV.x + b.bulletSpeedPV.y*b.bulletSpeedPV.y <= 1) {
+        bulletArrayList.remove(i);        //if bullet speed lower than one tenth of the original setting, remove it from bullet array list
         continue;
       }
       for (int j = monsterArrayList.size() - 1; j >= 0; j--) {
@@ -40,6 +40,7 @@ void bulletArrayListFunction() {
           && b.bulletCurrentPositionPV.y >= m.monsterCurrentCenterYI - monsterHeightSetting - bulletRadius && b.bulletCurrentPositionPV.y <= m.monsterCurrentCenterYI + monsterHeightSetting + bulletRadius) {
           bulletArrayList.remove(i);
           monsterArrayList.remove(j);
+          material++;
           break;
         }
       }

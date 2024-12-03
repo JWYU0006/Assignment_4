@@ -1,4 +1,4 @@
-ArrayList<Tower> towerArrayList; //<>//
+ArrayList<Tower> towerArrayList; //<>// //<>// //<>//
 
 //initialize a new tower arraylist to store towers that would be built
 void towerArrayListInitialization() {
@@ -17,7 +17,7 @@ class Tower {
   //called in draw()
   void towerFunction() {
     drawTower();
-    if (frameCount - towerAttackframeRecord >= 30) {        //trigger attack function per 30 frame
+    if (frameCount - towerAttackframeRecord >= 30 && monsterArrayList.size() >= 1) {        //trigger attack function per 30 frame when have monsters in game
       attackMonster();
       towerAttackframeRecord = frameCount;        //store frame when attack
     }
@@ -44,7 +44,7 @@ class Tower {
       }
     }
     Bullet b = new Bullet(towerPositionPV.x, towerPositionPV.y - towerHeightSetting);
-    b.bulletCurrentPositionPV.set(towerPositionPV.x, towerPositionPV.y - towerHeightSetting);
+    b.bulletCurrentPositionPV.set(towerPositionPV.x, towerPositionPV.y - towerHeightSetting);        //override bullet constructor, same as below
     b.bulletSpeedPV.set(10/distanceMonster*(tempM.monsterCurrentCenterXI - towerPositionPV.x), 10/distanceMonster*(tempM.monsterCurrentCenterYI - towerPositionPV.y + towerHeightSetting));        //calculate the speed by triangle ratio
     b.bulletAcceleration.set(b.bulletSpeedPV.x/300, b.bulletSpeedPV.y/300);
     bulletArrayList.add(b);
