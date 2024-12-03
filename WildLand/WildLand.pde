@@ -18,7 +18,7 @@ int playerSpeedSetting = 2;        //pixel player move per frame
 int endTime = 0;        //how many seconds have the player play
 
 //weapon settings
-int bulletSpeed = 10;        //The linear velocity of the bullet
+int bulletSpeedSetting = 10;        //The linear velocity of the bullet
 int bulletRadius = 2;        //bullet is a ellipse, the radius of the round
 int fireRate = 10;        //the max number of bullets per second
 
@@ -56,10 +56,8 @@ int lastTimeShoot = 0;
 int currentTimeShoot = 0;
 int lastWave = 0;
 void draw() {
-  println(player.playerDirectionPV);
   drawMap();
   environment.environmentFunction();
-  player.playerFunction();
   //add new wave of monster per 5 seconds
   if ( (int)(millis() / 5000) != lastWave) {
     lastWave++;
@@ -109,6 +107,8 @@ void draw() {
     textSize(40);
     text(millis()/1000, 350, 0);
   }
+
+  player.playerFunction();
 }
 
 void keyPressed() {

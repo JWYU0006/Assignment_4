@@ -1,4 +1,4 @@
-class Player { //<>// //<>// //<>//
+class Player { //<>//
   int playerMaxHPI = 100;
   int playerCurrentHPI = playerMaxHPI;
   PVector playerDirectionPV = new PVector(0, 0);        //determine which direction of image is used
@@ -117,8 +117,7 @@ class Player { //<>// //<>// //<>//
   //shoot
   void shoot() {
     if (mouseButton == LEFT) {
-      Bullet b = new Bullet();
-      b.generateBullet(weaponEndPointXF, weaponEndPointYF);
+      Bullet b = new Bullet(weaponEndPointXF, weaponEndPointYF);
       bulletArrayList.add(b);
     }
   }
