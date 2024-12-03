@@ -1,5 +1,4 @@
- //<>//
-class Player {
+class Player { //<>// //<>// //<>//
   int playerMaxHPI = 100;
   int playerCurrentHPI = playerMaxHPI;
   PVector playerDirectionPV = new PVector(0, 0);        //determine which direction of image is used
@@ -16,9 +15,14 @@ class Player {
   int startMeleeAttack = 0;        //store frameCount - when player start melee attack animation
   Boolean meleeAttackBoolean = false;        //player's melee attack state, is in melee attack animation or not
 
+  Boolean buildModeB = false;
+
   //run this function make Character system work
   void playerFunction() {
     drawPlayer();
+    if (buildModeB) {        //if buildMode is on, activate function
+      buildMode();
+    }
   }
 
   void drawPlayer() {
@@ -100,6 +104,13 @@ class Player {
       if (playerVelocityPV.x == 2)
         playerVelocityPV.x = 0;
       break;
+    case 'r':
+      if (buildModeB == false) {
+        buildModeB = true;        //if buildMode is off, press r to turn it on
+      } else {
+        buildModeB= false;        //if buildMode is on, press r to turn it off.
+      }
+      break;
     }
   }
 
@@ -109,6 +120,16 @@ class Player {
       Bullet b = new Bullet();
       b.generateBullet(weaponEndPointXF, weaponEndPointYF);
       bulletArrayList.add(b);
+    }
+  }
+
+  void buildMode() {
+    fill(150, 150);        //transparent tower to preview position
+    rect(mouseX - towerWidthSetting/2, mouseY - towerHeightSetting, towerWidthSetting, towerHeightSetting);
+    if (keyPressed && key == ' ') {        //if press space in build mode, create a new tower stored in towerArrayList
+      Tower t = new Tower(mouseX, mouseY);
+      towerArrayList.add(t);
+      buildModeB = false;
     }
   }
 
@@ -131,7 +152,7 @@ class Player {
         imageCenterOffset.x = -43;
         imageCenterOffset.y = -42;
       } else if (4<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 5) {
-        playerImageFileName = "player_front_attack_2.png"; //<>//
+        playerImageFileName = "player_front_attack_2.png";
         imageCenterOffset.x = -39;
         imageCenterOffset.y = -40;
       } else if (6<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 7) {

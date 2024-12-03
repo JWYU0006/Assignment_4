@@ -29,6 +29,10 @@ int monsterHeightSetting = 20;
 int monsterSpeedSetting = 1;        //pixel monster move per frame
 int monsterHPSetting = 100;        //player hp limit
 
+//tower settings
+int towerWidthSetting = 30;
+int towerHeightSetting = 60;
+
 //creating objects
 Environment environment = new Environment();
 Player player = new Player();
@@ -43,6 +47,7 @@ void setup() {
   //initialization function (All initialization function should be called once)
   tileGrassArrayInitialization();
   monsterArrayInitialization();
+  towerArrayListInitialization();
   //load images
   splatter = new Gif(this, "splatter.gif");
 }
@@ -63,6 +68,10 @@ void draw() {
   //run all monsters' function
   for (Monster m : monsterArrayList) {
     m.monsterFunction();
+  }
+  //run all tower's function
+  for (Tower t : towerArrayList) {
+    t.towerFunction();
   }
   bulletArrayListFunction();
   //shoot function start
