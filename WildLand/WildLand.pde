@@ -1,5 +1,5 @@
 import processing.sound.*;
-import gifAnimation.*;
+//import gifAnimation.*;
 
 //settings
 //map settings
@@ -37,7 +37,7 @@ Environment environment = new Environment();
 Player player = new Player();
 
 //load file
-Gif splatter;        //monster death gif
+//Gif splatter;        //monster death gif
 SoundFile gunSound;        //player gun shot sound
 
 void setup() {
@@ -49,7 +49,7 @@ void setup() {
   monsterArrayInitialization();
   towerArrayListInitialization();
   //load file
-  splatter = new Gif(this, "splatter.gif");
+  //splatter = new Gif(this, "splatter.gif");
   gunSound = new SoundFile(this, "762x54r Single Isolated MP3.mp3");
 }
 

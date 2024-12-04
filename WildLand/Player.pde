@@ -53,7 +53,7 @@ class Player { //<>// //<>// //<>//
     //fill(255);
     //rect(400 - playerWidthSetting/2, 380 - playerHeightSetting/2, playerWidthSetting, playerHeightSetting);
     //trigger player melee attack
-    playerMeleeAttack();
+    playerMeleeAttackAnimation();
     playerImage = loadImage(playerImageFileName);
     image(playerImage, 400 + imageCenterOffset.x, 400 + imageCenterOffset.y);
     //weapon - gun
@@ -135,7 +135,7 @@ class Player { //<>// //<>// //<>//
   }
 
   //melee attack animation and function
-  void playerMeleeAttack() {
+  void playerMeleeAttackAnimation() {
     //when press right and player is not in attack animation
     if (mousePressed && mouseButton == RIGHT && meleeAttackBoolean == false
       && (playerImageFileName == "player_front_idle.png" || playerImageFileName == "player_back_idle.png"
@@ -143,7 +143,7 @@ class Player { //<>// //<>// //<>//
       startMeleeAttack = frameCount;        //store when start attack animation by frameCount
       meleeAttackBoolean = true;
     }
-    if (playerDirectionPV.y == 1 && meleeAttackBoolean == true) {        //when player face down and trigger melee attack
+    if (playerDirectionPV.y == 1 && meleeAttackBoolean == true) {        //when player face down and trigger melee attack, totally 4 direction if, same logic
       if (0<= frameCount - startMeleeAttack && frameCount - startMeleeAttack <= 1) {        //change animation image per 2 frame
         playerImageFileName = "player_front_attack_0.png";
         imageCenterOffset.x = -33;        //offset to locate center point and align collision box with image
@@ -172,6 +172,7 @@ class Player { //<>// //<>// //<>//
         playerImageFileName = "player_front_attack_6.png";
         imageCenterOffset.x = -15;
         imageCenterOffset.y = -44;
+        //playerMeleeAttackDamage(playerDirectionPV);        //trigger damage function
       } else {
         playerImageFileName = "player_front_idle.png";        //animation ends, resume idle
         imageCenterOffset.x = -15;
@@ -208,6 +209,7 @@ class Player { //<>// //<>// //<>//
         playerImageFileName = "player_back_attack_6.png";
         imageCenterOffset.x = -15;
         imageCenterOffset.y = -44;
+        //playerMeleeAttackDamage(playerDirectionPV);
       } else {
         playerImageFileName = "player_back_idle.png";
         imageCenterOffset.x = -15;
@@ -244,6 +246,7 @@ class Player { //<>// //<>// //<>//
         playerImageFileName = "player_left_attack_6.png";
         imageCenterOffset.x = -15;
         imageCenterOffset.y = -44;
+        //playerMeleeAttackDamage(playerDirectionPV);
       } else {
         playerImageFileName = "player_left_idle.png";
         imageCenterOffset.x = -15;
@@ -280,6 +283,7 @@ class Player { //<>// //<>// //<>//
         playerImageFileName = "player_right_attack_6.png";
         imageCenterOffset.x = -29;
         imageCenterOffset.y = -44;
+        //playerMeleeAttackDamage(playerDirectionPV);
       } else {
         playerImageFileName = "player_right_idle.png";
         imageCenterOffset.x = -15;
@@ -288,4 +292,32 @@ class Player { //<>// //<>// //<>//
       }
     }
   }
+
+  //void playerMeleeAttackDamage(PVector direction) {
+  //  float x = direction.x;
+  //  float y = direction.y;
+  //  for (Monster m : monsterArrayList) {
+  //    if (m.monsterCurrentCenterXI >= 360 && m.monsterCurrentCenterXI <= 440) {        //if monster is in horizontal range
+  //      if (y == 1 && m.monsterCurrentCenterYI >= 400 && m.monsterCurrentCenterYI <= 450) {        //if face down and monster is in vertical range
+  //        monsterArrayList.remove(m);
+  //        material++;
+  //        continue;
+  //      } else if (y == -1 && m.monsterCurrentCenterYI <= 400 && m.monsterCurrentCenterYI >= 350) {        //if face up and monster is in vertical range
+  //        monsterArrayList.remove(m);
+  //        material++;
+  //        continue;
+  //      }
+  //    } else if (m.monsterCurrentCenterYI >= 360 && m.monsterCurrentCenterYI <= 440) {        //if monster is in vertical range
+  //      if (x == 1 && m.monsterCurrentCenterXI >= 400 && m.monsterCurrentCenterXI <= 450) {        //if face down and monster is in horizontal range
+  //        monsterArrayList.remove(m);
+  //        material++;
+  //        continue;
+  //      } else if (x == -1 && m.monsterCurrentCenterXI <= 400 && m.monsterCurrentCenterXI >= 350) {        //if face up and monster is in horizontal range
+  //        monsterArrayList.remove(m);
+  //        material++;
+  //        continue;
+  //      }
+  //    }
+  //  }
+  //}
 }
